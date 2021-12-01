@@ -26,9 +26,17 @@ class User (db.Model):
     date_added = db.Column(db.Date)
 
 ##### Serves as Page Layout
-@app.route('/')
-def page_layout():
-    return render_template("main_page.html", users=User.query.all())
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "GET":
+        return render_template("main_page.html", users=User.query.all())
+    else:
+        return redirect(url_for('selection'))
+
+@app.route("/selection", methods=["GET", "POST"])
+def selection():
+    return render_template("song_selection.html")
+
 
 if __name__=="__main__":
     app.run()
