@@ -26,6 +26,37 @@ class User (db.Model):
     phone = db.Column(db.String(15))
     date_added = db.Column(db.Date)
 
+class Song (db.Model):
+    __tablename__ = "songs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(500))
+    artist = db.Column(db.String(500))
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    category = db.relationship('Category', foreign_keys=category_id)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user = db.relationship('User', foreign_keys=user_id)
+    year = db.Column(db.Integer)
+    added = db.Column(db.Date)
+
+
+class Category (db.Model):
+    __tablename__ = "categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(500))
+    added = db.Column(db.Date)
+
+class YearCategory (db.Model):
+    __tablename__ = "yearcategories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    year = db.Column(db.Integer)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    category = db.relationship('Category', foreign_keys=category_id)
+    added = db.Column(db.Date)
+
+
 ##### Serves as Page Layout
 @app.route("/", methods=["GET"])
 def index():
