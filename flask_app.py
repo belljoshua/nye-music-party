@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
+import sys
 
 app = Flask(__name__)
 
@@ -26,17 +27,18 @@ class User (db.Model):
     date_added = db.Column(db.Date)
 
 ##### Serves as Page Layout
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
     if request.method == "GET":
         return render_template("main_page.html", users=User.query.all())
-    else:
-        return redirect(url_for('selection'))
 
 @app.route("/selection", methods=["GET", "POST"])
 def selection():
-    return render_template("song_selection.html")
+    if request.method == "GET":
+        print(request.args.get("users_list", "no value"), file=sys.stderr)
+        return render_template("song_selection.html", username=request.args.get("users_list", "no value"))
 
 
 if __name__=="__main__":
     app.run()
+
