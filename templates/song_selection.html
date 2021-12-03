@@ -28,15 +28,15 @@
             <select class="form-select" name="categories" id="cats" form="selection_form">
                     <option>Select a Category</option>
                     {% for category in categories %}
-                        <option value={{ category.id }}>
+                        <option value={{ category.id }} {% if selected_category %}{% if selected_category|int() == category.id|int() %}selected{% endif %}{% endif %} >
                             {{ category.name }}
                         </option>
                     {% endfor %}
                 </select>
             <h4>Song Title</h4>
-            <input type="text" name="song_title" form="selection_form">
+            <input type="text" name="song_title" {% if song_title %}value={{ song_title }}{% endif %} form="selection_form">
             <h4>Artist</h4>
-            <input type="text" name="artist" form="selection_form">
+            <input type="text" name="artist" {% if artist %}value={{ artist }}{% endif %} form="selection_form">
             <form action="/selection" method="POST" id=selection_form>
                 <input type="hidden" name="user" value={{ user.id }}>
                 <button type="submit" class="btn btn-primary">Submit</button>

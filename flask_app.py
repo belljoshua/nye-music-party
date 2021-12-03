@@ -80,15 +80,31 @@ def selection():
                 error=request.args["error"],
                 user=user,
                 categories=Category.query.all(),
-                songs=user_songs)
+                song_title=request.args["song_title"],
+                artist=request.args["artist"],
+                selected_category=request.args["category"],
+                songs=user_songs,
+                )
         return render_template(
             "song_selection.html",
             user=user,
             categories=Category.query.all(),
             songs=user_songs)
     else:
-        if Category.query.get(request.form["categories"]) == None:
-            return redirect(url_for('selection', song_title=request.form["song_title"], artist=request.form["artist"], category=request.form["categories"], users_list=request.form["user"], error="Please choose a category"))
+        song_title = request.form["song_title"]
+        artist = request.form["artist"]
+        category = request.form["categories"]
+        user = request.form["user"]
+        if Category.query.get(category) == None:
+            error = "Please choose a category"
+        elif not song_title:
+            error = "Please enter a song title"
+        elif not artist:
+            error = "Please enter an artist"
+
+        if error:
+            return redirect(url_for('selection', song_title=song_title, artist=artist, category=category, users_list=user, error=error))
+
         song = Song (
                 title=request.form["song_title"],
                 artist=request.form["artist"],
