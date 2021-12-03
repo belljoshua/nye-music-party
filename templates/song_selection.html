@@ -16,20 +16,55 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Home</a>
+                    <a class="navbar-brand" href="/">Home</a>
                 </div>
             </div>
         </nav>
 
 
         <div class="container">
-            <h1>Welcome, {{ username }}</h1>
-            <form action="/return_page" method="GET">
-                <select name="users" id="users">
-                    
+            <h1>Welcome, {{ user.name }}</h1>
+            <h4>Category</h4>
+            <select class="form-select" name="categories" id="cats" form="selection_form">
+                    <option>Select a Category</option>
+                    {% for category in categories %}
+                        <option value={{ category.id }}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
                 </select>
-                <button type="submit">Submit</button>
+            <h4>Song Title</h4>
+            <input type="text" name="song_title" form="selection_form">
+            <h4>Artist</h4>
+            <input type="text" name="artist" form="selection_form">
+            <form action="/selection" method="POST" id=selection_form>
+                <input type="hidden" name="user" value={{ user.id }}>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+            {% if error %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endif %}
+            <h2>Your Songs</h2>
+            <div class="table-responsive">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th scope="col">Song</th>
+                          <th scope="col">Artist</th>
+                          <th scope="col">Category</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for song in songs %}
+                        <tr>
+                            <td scope="row">{{ song.title }}</td>
+                            <td scope="row">{{ song.artist }}</td>
+                            <td scope="row">{{ song.category.name }}</td>
+                        </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+            </div>
         </div><!-- /.container -->
     </body>
 

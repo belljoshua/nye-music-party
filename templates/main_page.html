@@ -16,24 +16,29 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Home</a>
+                    <a class="navbar-brand" href="/">Home</a>
                 </div>
             </div>
         </nav>
 
 
         <div class="container">
-            <h1>Example Web Application</h1>
+            <h1>NYE Music Selector</h1>
+            <h3>Select Your Profile</h3>
             <form action="/selection" method="GET">
                 <select name="users_list" id="users">
+                    <option>Select profile</option>
                     {% for user in users %}
-                        <option>
+                        <option value={{ user.id }}>
                             {{ user.name }}
                         </option>
                     {% endfor %}
                 </select>
                 <button type="submit">Submit</button>
             </form>
+            {% if error %}
+                <div class="alert alert-danger" role="alert">Please select a profile</div>
+            {% endif %}
         </div><!-- /.container -->
     </body>
 
