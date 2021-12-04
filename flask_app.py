@@ -70,6 +70,7 @@ def index():
 def selection():
     if request.method == "GET":
         user_id = request.args.get("users_list", "no value")
+        print("user_id:", user_id, file=sys.stderr)
         user = User.query.get(user_id)
         if user == None:
             return redirect(url_for('index', error="True"))
@@ -95,12 +96,16 @@ def selection():
         artist = request.form["artist"]
         category = request.form["categories"]
         user = request.form["user"]
+        error = None
         if Category.query.get(category) == None:
             error = "Please choose a category"
         elif not song_title:
             error = "Please enter a song title"
         elif not artist:
             error = "Please enter an artist"
+        elif Song.query.filter_by(category_id=category, year=datetime.now().year, user_id=user).first():
+            print ("query result:",Song.query.filter_by(category_id=category, year=datetime.now().year, user_id=user),file=sys.stderr)
+            error = "You have already selected a song with that category"
 
         if error:
             return redirect(url_for('selection', song_title=song_title, artist=artist, category=category, users_list=user, error=error))
@@ -117,7 +122,15 @@ def selection():
 
         return redirect(url_for('selection', users_list=request.form["user"]))
 
-
+@app.route("/delete/song", methods=["POST"])
+def deleteSong():
+    song_id = request.form["delete_button"]
+    Song.query.filter_by(id=song_id).delete()
+    db.session.commit()
+    # song = Song.query.get(song_id)
+    # song.delete()
+    user_id = request.form["user"]
+    return redirect(url_for("selection", users_list=user_id))
 
 if __name__=="__main__":
     app.run()

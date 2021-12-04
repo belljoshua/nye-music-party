@@ -52,6 +52,7 @@
                           <th scope="col">Song</th>
                           <th scope="col">Artist</th>
                           <th scope="col">Category</th>
+                          <th scope="col"></th>
                       </tr>
                   </thead>
                   <tbody>
@@ -60,6 +61,11 @@
                             <td scope="row">{{ song.title }}</td>
                             <td scope="row">{{ song.artist }}</td>
                             <td scope="row">{{ song.category.name }}</td>
+                            <form action="/delete/song" method="POST" id=delete_form_{{ song.id }} style="display: none">
+                                <input type="hidden" name="user" value={{ user.id }}>
+                            </form>
+                            <td scope="row"><button class="btn" type="submit" name="delete_button" value={{ song.id }} form="delete_form_{{ song.id }}">Delete</button></td>
+
                         </tr>
                       {% endfor %}
                   </tbody>
