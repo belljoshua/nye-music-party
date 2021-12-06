@@ -5,19 +5,17 @@ from flask_sqlalchemy import SQLAlchemy
 import sys
 import os
 
+my_dir = os.path.dirname(__file__)
+
 app = Flask(__name__)
+app.config.from_object("config.Config")
 
-app.config["DEBUG"] = True
-
-SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
-    username="joshbell",
-    password="mysqlpassword",
-    hostname="joshbell.mysql.pythonanywhere-services.com",
-    databasename="joshbell$music-party",
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
+    username=app.config["DB_USERNAME"],
+    password=app.config["DB_PASSWORD"],
+    hostname=app.config["DB_HOSTNAME"],
+    databasename=app.config["DB_NAME"],
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
@@ -62,7 +60,6 @@ class YearCategory (db.Model):
 
 
 # Initializes the songs table from a CSV
-# my_dir = os.path.dirname(__file__)
 # csvpath = os.path.join(my_dir, "songs.csv")
 # csvsongs = []
 # with open(csvpath, mode='r', encoding="utf8") as file:
