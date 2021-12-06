@@ -5,6 +5,43 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+        <script>
+            function searchSongs() {
+                // Declare variables
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("song_search");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("all_songs_table");
+                tr = table.getElementsByTagName("tr");
+
+                // Loop through all table rows, and hide those who don't match the search query
+                for (i = 0; i < tr.length; i++) {
+                    tdElems = tr[i].getElementsByTagName("td")
+                    songTd = tdElems[0];
+                    artistTd = tdElems[1]
+                    hide = true
+                    if (songTd) {
+                        txtValue = songTd.textContent || songTd.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            hide = false
+                        }
+                    }
+                    if (artistTd && hide){
+                        txtValue = artistTd.textContent || artistTd.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            hide = false
+                        }
+                    }
+                    if (hide){
+                        tr[i].style.display = "none"
+                    }
+                    else{
+                        tr[i].style.display = ""
+                    }
+                }
+            }
+        </script>
     </head>
     <body>
         <nav class="navbar navbar-inverse">
@@ -20,12 +57,10 @@
                 </div>
             </div>
         </nav>
-
-
         <div class="container">
             <h1>Welcome, {{ user.name }}</h1>
             <h4>Category</h4>
-            <select class="form-select" name="categories" id="cats" form="selection_form">
+            <select class="form-control" name="categories" id="cats" form="selection_form">
                     <option>Select a Category</option>
                     {% for category in categories %}
                         <option value={{ category.id }} {% if selected_category %}{% if selected_category|int() == category.id|int() %}selected{% endif %}{% endif %} >
@@ -34,17 +69,16 @@
                     {% endfor %}
                 </select>
             <h4>Song Title</h4>
-            <input type="text" name="song_title" {% if song_title %}value={{ song_title }}{% endif %} form="selection_form">
+            <input type="text" class="form-control" name="song_title" {% if song_title %}value={{ song_title }}{% endif %} form="selection_form">
             <h4>Artist</h4>
-            <input type="text" name="artist" {% if artist %}value={{ artist }}{% endif %} form="selection_form">
-            <form action="/selection" method="POST" id=selection_form>
-                <input type="hidden" name="user" value={{ user.id }}>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            <input type="text" class="form-control" name="artist" {% if artist %}value={{ artist }}{% endif %} form="selection_form">
+            <input type="hidden" name="user" value={{ user.id }} form="selection_form">
+            <button type="submit" class="btn btn-primary mr-10" form="selection_form">Submit</button>
+            <form action="/selection" method="POST" id=selection_form></form>
             {% if error %}
                 <div class="alert alert-danger" role="alert">{{ error }}</div>
             {% endif %}
-            <h2>Your Songs</h2>
+            <h2>Your Songs for the Upcoming NYE</h2>
             <div class="table-responsive">
               <table class="table">
                   <thead>
@@ -70,6 +104,26 @@
                       {% endfor %}
                   </tbody>
               </table>
+            </div>
+            <h2>Previously Selected Songs</h2>
+            <input type="text" id="song_search" onkeyup="searchSongs()" placeholder="Search for songs..">
+            <div class="table-responsive">
+                <table class="table" id=all_songs_table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Song</th>
+                            <th scope="col">Artist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for song in all_songs %}
+                            <tr>
+                                <td scope="row">{{ song.title }}</td>
+                                <td scope="row">{{ song.artist }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div><!-- /.container -->
     </body>

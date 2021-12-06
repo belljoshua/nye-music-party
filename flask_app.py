@@ -1,7 +1,9 @@
+import csv
 from datetime import datetime
 from flask import Flask, redirect, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 import sys
+import os
 
 app = Flask(__name__)
 
@@ -18,6 +20,7 @@ app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+
 
 class User (db.Model):
     __tablename__ = "users"
@@ -58,6 +61,27 @@ class YearCategory (db.Model):
     added = db.Column(db.Date, default=datetime.now)
 
 
+# Initializes the songs table from a CSV
+# my_dir = os.path.dirname(__file__)
+# csvpath = os.path.join(my_dir, "songs.csv")
+# csvsongs = []
+# with open(csvpath, mode='r', encoding="utf8") as file:
+#     csvfile = csv.DictReader(file)
+#     for row in csvfile:
+#         csvsongs.append((row["Song"], row["Artist"], row["Year"]))
+
+# for csvsong in csvsongs:
+#     title = csvsong[0]
+#     artist = csvsong[1]
+#     year = csvsong[2]
+#     song = Song(
+#         title=title,
+#         artist=artist,
+#         year=year
+#     )
+#     db.session.add(song)
+# db.session.commit()
+
 ##### Serves as Page Layout
 @app.route("/", methods=["GET"])
 def index():
@@ -75,6 +99,7 @@ def selection():
         if user == None:
             return redirect(url_for('index', error="True"))
         user_songs = Song.query.filter(Song.user_id == user_id, Song.year == datetime.now().year)
+        all_songs = Song.query.all()
         if "error" in request.args:
             return render_template(
                 "song_selection.html",
@@ -85,12 +110,14 @@ def selection():
                 artist=request.args["artist"],
                 selected_category=request.args["category"],
                 songs=user_songs,
+                all_songs=all_songs
                 )
         return render_template(
             "song_selection.html",
             user=user,
             categories=Category.query.all(),
-            songs=user_songs)
+            songs=user_songs,
+            all_songs=all_songs)
     else:
         song_title = request.form["song_title"]
         artist = request.form["artist"]
