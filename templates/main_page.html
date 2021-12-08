@@ -15,23 +15,28 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Export Songs</a>
+                        <a class="nav-link" href="/export-songs">Export Songs</a>
                     </li>
                 </ul>
             </div>
         </nav>
         <div class="container">
             <h1>NYE Music Selector</h1>
-            <h3>Select Your Profile</h3>
+            <div class="form-group">
+
+            </div>
             <form action="/selection" method="GET">
-                <select class="form-control" name="users_list" id="users">
-                    <option>Select profile</option>
-                    {% for user in users %}
-                        <option value={{ user.id }}>
-                            {{ user.name }}
-                        </option>
-                    {% endfor %}
-                </select>
+                <div class="form-group">
+                    <label for="users">Select Your Profile</label>
+                    <select class="form-control" name="users_list" id="users">
+                        <option>Select profile</option>
+                        {% for user in users %}
+                            <option value={{ user.id }}>
+                                {{ user.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             {% if error %}

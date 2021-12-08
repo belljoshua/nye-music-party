@@ -52,29 +52,37 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Export Songs</a>
+                        <a class="nav-link" href="/export-songs">Export Songs</a>
                     </li>
                 </ul>
             </div>
         </nav>
         <div class="container">
             <h1>Welcome, {{ user.name }}</h1>
-            <h4>Category</h4>
-            <select class="form-control" name="categories" id="cats" form="selection_form">
-                    <option>Select a Category</option>
-                    {% for category in categories %}
-                        <option value={{ category.id }} {% if selected_category %}{% if selected_category|int() == category.id|int() %}selected{% endif %}{% endif %} >
-                            {{ category.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            <h4>Song Title</h4>
-            <input type="text" class="form-control" name="song_title" {% if song_title %}value="{{ song_title }}"{% endif %} form="selection_form">
-            <h4>Artist</h4>
-            <input type="text" class="form-control" name="artist" {% if artist %}value="{{ artist }}"{% endif %} form="selection_form">
-            <input type="hidden" name="user" value={{ user.id }} form="selection_form">
-            <button type="submit" class="btn btn-primary mr-10" form="selection_form">Submit</button>
-            <form action="/selection" method="POST" id=selection_form></form>
+            <form action="/selection" method="POST">
+                <div class="form-group">
+                    <label for="cats">Category</label>
+                    <select class="form-control" name="categories" id="cats">
+                        <option>Select a Category</option>
+                        {% for category in categories %}
+                            <option value={{ category.id }} {% if selected_category %}{% if selected_category|int() == category.id|int() %}selected{% endif %}{% endif %} >
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="select_title">Song Title</label>
+                    <input type="text" class="form-control" name="song_title" id="select_title" {% if song_title %}value="{{ song_title }}"{% endif %}>
+                </div>
+                <div class="form-group">
+                    <label for="select_artist">Artist</label>
+                    <input type="text" class="form-control" name="artist" id="select_artist" {% if artist %}value="{{ artist }}"{% endif %}>
+                </div>
+                <input type="hidden" name="user" value={{ user.id }}>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
             {% if error %}
                 <div class="alert alert-danger" role="alert">{{ error }}</div>
             {% endif %}
