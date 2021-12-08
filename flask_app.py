@@ -130,6 +130,8 @@ def selection():
         elif Song.query.filter_by(category_id=category, year=datetime.now().year, user_id=user).first():
             print ("query result:",Song.query.filter_by(category_id=category, year=datetime.now().year, user_id=user),file=sys.stderr)
             error = "You have already selected a song with that category"
+        elif Song.query.filter_by(title=song_title, artist=artist).first():
+            error = "This song has already been used"
 
         if error:
             return redirect(url_for('selection', song_title=song_title, artist=artist, category=category, users_list=user, error=error))

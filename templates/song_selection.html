@@ -69,9 +69,9 @@
                     {% endfor %}
                 </select>
             <h4>Song Title</h4>
-            <input type="text" class="form-control" name="song_title" {% if song_title %}value={{ song_title }}{% endif %} form="selection_form">
+            <input type="text" class="form-control" name="song_title" {% if song_title %}value="{{ song_title }}"{% endif %} form="selection_form">
             <h4>Artist</h4>
-            <input type="text" class="form-control" name="artist" {% if artist %}value={{ artist }}{% endif %} form="selection_form">
+            <input type="text" class="form-control" name="artist" {% if artist %}value="{{ artist }}"{% endif %} form="selection_form">
             <input type="hidden" name="user" value={{ user.id }} form="selection_form">
             <button type="submit" class="btn btn-primary mr-10" form="selection_form">Submit</button>
             <form action="/selection" method="POST" id=selection_form></form>
