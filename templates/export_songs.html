@@ -15,33 +15,25 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/export-songs">Export Songs</a>
+                        <a class="nav-link" href="#">Export Songs</a>
                     </li>
                 </ul>
             </div>
         </nav>
         <div class="container">
-            <h1>NYE Music Selector</h1>
-            <div class="form-group">
-
-            </div>
-            <form action="/selection" method="GET">
+            <h1>Export Songs</h1>
+            <form action="/export-songs">
                 <div class="form-group">
-                    <label for="users">Select Your Profile</label>
-                    <select class="form-control" name="users_list" id="users" required>
-                        <option value="" hidden>Select profile</option>
-                        {% for user in users %}
-                            <option value={{ user.id }}>
-                                {{ user.name }}
-                            </option>
+                    <label for="select_year">Year of NYE (not New Year's Day)</label>
+                    <select class="form-control" name="selected_year" id="select_year">
+                        <option>Select Year</option>
+                        {% for year in years %}
+                            <option value={{ year }}>{{ year }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Go</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-            {% if error %}
-                <div class="alert alert-danger" role="alert">Please select a profile</div>
-            {% endif %}
         </div><!-- /.container -->
     </body>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

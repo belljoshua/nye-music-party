@@ -1,9 +1,10 @@
 import csv
 from datetime import datetime
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, send_file
 from flask_sqlalchemy import SQLAlchemy
 import sys
 import os
+from io import BytesIO
 
 my_dir = os.path.dirname(__file__)
 
@@ -85,7 +86,7 @@ def index():
     if request.method == "GET":
         if "error" in request.args:
             return render_template("main_page.html", users=User.query.all(), error="True")
-        return render_template("main_page.html", users=User.query.all())
+        return render_template("main_page.html", users=User.query.order_by(User.name).all())
 
 @app.route("/selection", methods=["GET", "POST"])
 def selection():
@@ -97,12 +98,14 @@ def selection():
             return redirect(url_for('index', error="True"))
         user_songs = Song.query.filter(Song.user_id == user_id, Song.year == datetime.now().year)
         all_songs = Song.query.all()
+        user_categories = [s.category for s in user_songs]
+        categories = [yc.category for yc in YearCategory.query.filter(YearCategory.year == datetime.now().year) if yc.category not in user_categories]
         if "error" in request.args:
             return render_template(
                 "song_selection.html",
                 error=request.args["error"],
                 user=user,
-                categories=Category.query.all(),
+                categories=categories,
                 song_title=request.args["song_title"],
                 artist=request.args["artist"],
                 selected_category=request.args["category"],
@@ -112,7 +115,7 @@ def selection():
         return render_template(
             "song_selection.html",
             user=user,
-            categories=Category.query.all(),
+            categories=categories,
             songs=user_songs,
             all_songs=all_songs)
     else:
@@ -157,6 +160,36 @@ def deleteSong():
     # song.delete()
     user_id = request.form["user"]
     return redirect(url_for("selection", users_list=user_id))
+
+@app.route("/export-songs")
+def exportSongs():
+    if "selected_year" not in request.args:
+        years = [y.year for y in db.session.query(Song.year).distinct()]
+        return render_template("export_songs.html", years=years)
+    else:
+        year = request.args["selected_year"]
+        if not Song.query.filter_by(year=year).first():
+            print("YEAR WAS INVALID!!", file=sys.stderr)
+            return
+        songs = Song.query.filter_by(year=year).all()
+        filename = f'{year}_songs.csv'
+        # with open(filename, 'w') as file:
+        #     writer = csv.writer(file, delimiter=';')
+
+        #     writer.writerow(['title', 'artist'])
+
+        #     for song in songs:
+        #         writer.writerow([song.title, song.artist])
+        #     file.seek(0)
+        #     return send_file(file, as_attachment=True, mimetype="text/csv", attachment_filename=f'{year}_songs.csv')
+
+        output = "title;artist\n"
+        for song in songs:
+            output = output + f"{song.title};{song.artist}\n"
+
+        bb = BytesIO(bytes(output, "utf-8"))
+        return send_file(bb, as_attachment=True, mimetype="text/csv", attachment_filename=f'{year}_songs.csv')
+
 
 if __name__=="__main__":
     app.run()
