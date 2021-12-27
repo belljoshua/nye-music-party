@@ -59,79 +59,93 @@
         </nav>
         <div class="container">
             <h1>Welcome, {{ user.name }}</h1>
-            <form action="/selection" method="POST">
-                <div class="form-group">
-                    <label for="cats">Category</label>
-                    <select class="form-control" name="categories" id="cats">
-                        <option>Select a Category</option>
-                        {% for category in categories %}
-                            <option value={{ category.id }} {% if selected_category %}{% if selected_category|int() == category.id|int() %}selected{% endif %}{% endif %} >
-                                {{ category.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="select_title">Song Title</label>
-                    <input type="text" class="form-control" name="song_title" id="select_title" {% if song_title %}value="{{ song_title }}"{% endif %}>
-                </div>
-                <div class="form-group">
-                    <label for="select_artist">Artist</label>
-                    <input type="text" class="form-control" name="artist" id="select_artist" {% if artist %}value="{{ artist }}"{% endif %}>
-                </div>
-                <input type="hidden" name="user" value={{ user.id }}>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            <div class="card" style="margin:10 0 10 0">
+                <div class="card-body">
+                    <h5 class="card-title">Select a Song</h5>
+                    <form action="/selection" method="POST">
+                        <div class="form-group">
+                            <label for="cats">Category</label>
+                            <select class="form-control" name="categories" id="cats" required>
+                                <option value="" hidden>Select a Category</option>
+                                {% for category in categories %}
+                                    <option value={{ category.id }} {% if selected_category %}{% if selected_category|int() == category.id|int() %}selected{% endif %}{% endif %} >
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="select_title">Song Title</label>
+                            <input type="text" class="form-control" name="song_title" id="select_title" placeholder="Enter Song Title" {% if song_title %}value="{{ song_title }}"{% endif %} required>
+                        </div>
+                        <div class="form-group">
+                            <label for="select_artist">Artist</label>
+                            <input type="text" class="form-control" name="artist" id="select_artist" placeholder="Enter Artist Name" {% if artist %}value="{{ artist }}"{% endif %} required>
+                        </div>
+                        <input type="hidden" name="user" value={{ user.id }}>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
 
-            {% if error %}
-                <div class="alert alert-danger" role="alert">{{ error }}</div>
-            {% endif %}
-            <h2>Your Songs for the Upcoming NYE</h2>
-            <div class="table-responsive">
-              <table class="table">
-                  <thead>
-                      <tr>
-                          <th scope="col">Song</th>
-                          <th scope="col">Artist</th>
-                          <th scope="col">Category</th>
-                          <th scope="col"></th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for song in songs %}
-                        <tr>
-                            <td scope="row">{{ song.title }}</td>
-                            <td scope="row">{{ song.artist }}</td>
-                            <td scope="row">{{ song.category.name }}</td>
-                            <form action="/delete/song" method="POST" id=delete_form_{{ song.id }} style="display: none">
-                                <input type="hidden" name="user" value={{ user.id }}>
-                            </form>
-                            <td scope="row"><button class="btn" type="submit" name="delete_button" value={{ song.id }} form="delete_form_{{ song.id }}">Delete</button></td>
-
-                        </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
+                    {% if error %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endif %}
+                </div>
             </div>
-            <h2>Previously Selected Songs</h2>
-            <input type="text" id="song_search" onkeyup="searchSongs()" placeholder="Search for songs..">
-            <div class="table-responsive">
-                <table class="table" id=all_songs_table>
-                    <thead>
-                        <tr>
-                            <th scope="col">Song</th>
-                            <th scope="col">Artist</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for song in all_songs %}
-                            <tr>
-                                <td scope="row">{{ song.title }}</td>
-                                <td scope="row">{{ song.artist }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="card" style="margin:10 0 10 0">
+                <div class="card-body">
+                    <h5 class="card-title">Your Songs for the Upcoming NYE</h5>
+                    <div class="table-responsive">
+                      <table class="table">
+                          <thead>
+                              <tr>
+                                  <th scope="col">Song</th>
+                                  <th scope="col">Artist</th>
+                                  <th scope="col">Category</th>
+                                  <th scope="col"></th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {% for song in songs %}
+                                <tr>
+                                    <td scope="row">{{ song.title }}</td>
+                                    <td scope="row">{{ song.artist }}</td>
+                                    <td scope="row">{{ song.category.name }}</td>
+                                    <form action="/delete/song" method="POST" id=delete_form_{{ song.id }} style="display: none">
+                                        <input type="hidden" name="user" value={{ user.id }}>
+                                    </form>
+                                    <td scope="row"><button class="btn" type="submit" name="delete_button" value={{ song.id }} form="delete_form_{{ song.id }}">Delete</button></td>
+
+                                </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="margin:10 0 10 0">
+                <div class="card-body">
+                    <h5 class="card-title">Previously Selected Songs</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">The master list of all used songs</h6>
+                    <input type="text" id="song_search" onkeyup="searchSongs()" placeholder="Search for songs..">
+                    <div class="table-responsive">
+                        <table class="table" id=all_songs_table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Song</th>
+                                    <th scope="col">Artist</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for song in all_songs %}
+                                    <tr>
+                                        <td scope="row">{{ song.title }}</td>
+                                        <td scope="row">{{ song.artist }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div><!-- /.container -->
     </body>
